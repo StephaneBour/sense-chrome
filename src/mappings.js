@@ -102,7 +102,6 @@
             ret.push(alias);
          });
       }
-      console.log(per_index_types);
       return ret;
    }
 
