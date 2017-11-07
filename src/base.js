@@ -180,6 +180,21 @@ function copyToClipboard(value) {
     $(currentActive).focus(); // restore focus.
 }
 
+
+function querySave() {
+    var req = sense.utils.getCurrentRequest();
+    if (!req) return;
+
+    var es_server = $("#es_server").val(),
+        es_url = req.url,
+        es_method = req.method,
+        es_data = req.data;
+
+    var title = prompt("Please enter a title for your query : ", '');
+
+    sense.saved.saveQuery(es_server, es_url, es_method, es_data, title);
+}
+
 function copyAsCURL() {
     var req = sense.utils.getCurrentRequest();
     if (!req) return;
@@ -428,6 +443,7 @@ function init() {
         });
 
     sense.history.init();
+    sense.saved.init();
     sense.autocomplete.init();
 
     $("#send").tooltip();
@@ -438,6 +454,11 @@ function init() {
 
     $("#copy_as_curl").click(function (e) {
         copyAsCURL();
+        e.preventDefault();
+    });
+
+    $("#query_save").click(function (e) {
+        querySave();
         e.preventDefault();
     });
 

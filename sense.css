@@ -88,7 +88,7 @@ body {
     margin: auto !important;
 }
 
-#history_popup {
+#history_popup, #saved_popup {
     width: 90%;
     margin-left: -45%;
     height: 90%;
@@ -99,21 +99,21 @@ body {
 #history_popup .modal-body {
 }
 
-#history_popup .modal-header {
+#history_popup .modal-header, #saved_popup .modal-header {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
 }
 
-#history_popup .modal-footer {
+#history_popup .modal-footer, #saved_popup .modal-footer {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
 }
 
-#history_popup .nav {
+#history_popup .nav, #saved_popup .nav  {
     position: absolute;
     width: 400px;
     left: 0;
@@ -144,7 +144,7 @@ body {
     opacity: .25;
 }
 
-#history_popup .nav a {
+#history_popup .nav a, #saved_popup .nav a {
     display: block;
     margin: 0 0 -1px;
     padding: 8px 14px;
@@ -154,19 +154,19 @@ body {
     overflow: hidden;
 }
 
-#history_popup .nav li:first-child > a {
+#history_popup .nav li:first-child > a, #saved_popup .nav li:first-child > a {
     -webkit-border-radius: 6px 6px 0 0;
     -moz-border-radius: 6px 6px 0 0;
     border-radius: 6px 6px 0 0;
 }
 
-#history_popup .nav li:last-child > a {
+#history_popup .nav li:last-child > a, #saved_popup .nav li:last-child > a {
     -webkit-border-radius: 0 0 6px 6px;
     -moz-border-radius: 0 0 6px 6px;
     border-radius: 0 0 6px 6px;
 }
 
-#history_viewer {
+#history_viewer, #saved_viewer {
     position: absolute;
     left: 430px;
     right: 0;
