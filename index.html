@@ -20,6 +20,8 @@
         <button id="help_btn" class="btn pull-right-btn" data-toggle="modal" data-target="#help_popup">Help</button>
         <button id="history_btn" class="btn pull-right-btn" data-toggle="modal" data-target="#history_popup">History
         </button>
+        <button id="saved_btn" class="btn pull-right-btn" data-toggle="modal" data-target="#saved_popup">Saved query
+        </button>
 
     </div>
 </div>
@@ -38,6 +40,7 @@
                     class="icon-wrench"></i></a>
             <ul class="dropdown-menu">
                 <li><a id="copy_as_curl" tabindex="-1" href="#">Copy as cURL</a></li>
+                <li><a id="query_save" tabindex="-1" href="#">Save query</a></li>
                 <li><a id="auto_indent" tabindex="-1" href="#">Auto indent</a></li>
             </ul>
         </div>
@@ -110,6 +113,22 @@
     </div>
 </div>
 
+<div id="saved_popup" class="modal hide fade" data-keyboard="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Saved query</h3>
+    </div>
+    <div class="modal-body">
+        <ul class="nav nav-list">
+            <!--<li><a href="#"><i class="icon-chevron-right"></i><span></span></a></li>-->
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        <a href="#" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Select</a>
+    </div>
+</div>
+
 <div id="welcome_popup" class="modal hide fade" data-keyboard="true" data-remote="welcome.html">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -149,5 +168,6 @@
 <script src="src/base.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/mappings.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/history.js" type="text/javascript" charset="utf-8"></script>
+<script src="src/saved.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/autocomplete.js" type="text/javascript" charset="utf-8"></script>
 </html>
