@@ -1,8 +1,8 @@
 # sense-chrome
 
-The original extension "sense for chrome" was blacklisted.
+The original extension "sense for chrome" was [blacklisted](https://www.elastic.co/blog/sense-chrome-plugin-malware-issue)
 
-To use this fork :
+To use this fork (from https://github.com/elastic/sense) :
 
 - make a git clone of the project
 - go in your chrome extensions tabs
