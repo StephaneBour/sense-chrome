@@ -25,7 +25,7 @@ sense.kb.addEndpointDescription('_search', {
       },
       size: { __template: 20 },
       from: {},
-      _source: [""],
+      _source: [ "$FIELD$" ],
       sort: {
          __template: [
             { "FIELD": { "order": "desc"} }
