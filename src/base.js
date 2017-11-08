@@ -1,5 +1,5 @@
 if (!sense)
-    sense = { };
+    sense = {};
 
 sense.VERSION = "0.9.0";
 
@@ -106,19 +106,22 @@ function submitCurrentRequestToES() {
             if (typeof xhr.status == "number" &&
                 ((xhr.status >= 400 && xhr.status < 600) ||
                     (xhr.status >= 200 && xhr.status < 300)
-                    )) {
+                )) {
                 // we have someone on the other side. Add to history
                 sense.history.addToHistory(es_server, es_url, es_method, es_data);
 
 
                 var value = xhr.responseText;
                 try {
+                    var inJson = JSON.parse(value);
                     value = JSON.stringify(JSON.parse(value), null, 3);
+
                 }
                 catch (e) {
 
                 }
                 sense.output.getSession().setValue(value);
+                sense.output.getSession().setCsv(ConvertSourceToCSV(inJson.hits.hits));
             }
             else {
                 sense.output.getSession().setValue("Request failed to get to the server (status code: " + xhr.status + "):" + xhr.responseText);
@@ -148,7 +151,7 @@ function reformatData(data, indent) {
         }
     }
 
-    return { changed: changed, data: formatted_data}
+    return {changed: changed, data: formatted_data}
 }
 
 
@@ -237,6 +240,40 @@ function handleCURLPaste(text) {
 var CURRENT_REQ_RANGE = null;
 
 
+function ConvertSourceToCSV(objArray) {
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = '';
+    var headers = [];
+
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        var source = array[i]._source;
+
+        if (str == '') {
+            for (var index in source) {
+                str += index + ',';
+                headers.push(index);
+            }
+
+            str = str.slice(0, -1);
+            str += "\r\n";
+        }
+
+        for (var h = 0; h < headers.length; h++) {
+            if (typeof source[headers[h]] == 'undefined') {
+                source[headers[h]] = '';
+            }
+            line += source[headers[h]] + ',';
+        }
+
+        line = line.slice(0, -1);
+
+        str += line + '\r\n';
+    }
+
+    return str;
+}
+
 function saveEditorState() {
     try {
         var content = sense.editor.getValue();
@@ -247,6 +284,25 @@ function saveEditorState() {
         console.log("Ignoring saving error: " + e)
     }
 }
+
+function exportCsv() {
+    var csv = sense.output.getSession().getCsv();
+    saveAs(csv, "export-sense.csv");
+}
+
+var saveAs = (function () {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    return function (data, fileName) {
+        var blob = new Blob([data], {type: "text/plain;charset=utf-8"}),
+            url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+}());
 
 function updateEditorActionsBar() {
     var editor_actions = $("#editor_actions");
@@ -290,7 +346,7 @@ function highlighCurrentRequestAndUpdateActionBar() {
     if (new_current_req_range != null && CURRENT_REQ_RANGE != null &&
         new_current_req_range.start.row == CURRENT_REQ_RANGE.start.row &&
         new_current_req_range.end.row == CURRENT_REQ_RANGE.end.row
-        ) {
+    ) {
         // same request, now see if we are on the first line and update the action bar
         var cursorRow = sense.editor.getCursorPosition().row;
         if (cursorRow == CURRENT_REQ_RANGE.start.row) {
@@ -464,6 +520,12 @@ function init() {
 
     $("#auto_indent").click(function (e) {
         autoIndent();
+        e.preventDefault();
+    });
+
+
+    $("#export_csv").click(function (e) {
+        exportCsv();
         e.preventDefault();
     });
 

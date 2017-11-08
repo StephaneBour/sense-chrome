@@ -20,19 +20,20 @@ Have fun !
 - Autocompletion on fields
 - Add "filter" in autocomplete
 - Add "Saved query"
+- Export source data in CSV file 
 
 ### Screenshots
 
-Main screen
+#### Main screen
 
 ![Main screen](https://github.com/StephaneBour/sense-chrome/raw/master/screenshots/main.jpg)
 
-Autocomplete
+#### Autocomplete
 
 ![Main screen](https://github.com/StephaneBour/sense-chrome/raw/master/screenshots/autocomplete.jpg)
 
 
-Save your query
+#### Save your query
 
 ![Save 1](https://github.com/StephaneBour/sense-chrome/raw/master/screenshots/saved-1.jpg)
 
