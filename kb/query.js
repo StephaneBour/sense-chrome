@@ -42,7 +42,8 @@ sense.kb.addGlobalAutocompleteRules("query", {
         query: "",
         fields: ["$FIELD$"],
         use_dis_max: {__template: true, __one_of: [true, false]},
-        tie_breaker: 0.0
+        tie_breaker: 0.0,
+        type: { __one_of: ['best_fields', 'most_fields', 'cross_fields', 'phrase', 'phrase_prefix'] }
     },
     filter: {
         __template: {"FIELD": "TEXT"},
