@@ -67,6 +67,7 @@ function callES(server, url, method, data, successCallback, completeCallback) {
     $.ajax({
         url: url,
         data: method == "GET" ? null : data,
+        contentType: 'application/json',
 //      xhrFields: {
 //            withCredentials: true
 //      },
