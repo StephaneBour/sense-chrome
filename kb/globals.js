@@ -6,9 +6,14 @@ sense.kb.addGlobalAutocompleteRules("highlight", {
 
 // only used with scope links as there is no common name for scripts
 sense.kb.addGlobalAutocompleteRules("SCRIPT_ENV", {
-      __template: { "script": ""},
+      __template: { },
       script: "",
       lang: "",
-      params: {}
+      params: {
+          type_field: "",
+          promoted_field: ""
+      },
+      id: "",
+      source: ""
     }
 );

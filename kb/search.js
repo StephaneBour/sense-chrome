@@ -9,8 +9,26 @@ sense.kb.addEndpointDescription('_search', {
    doc_id_mode: "none",
    data_autocomplete_rules: {
       query: {
-         // populated by a global rule
+           // populated by a global rule
       },
+       aggs: {
+           __template: {
+               "aggregation_name": {
+               }
+           },
+           "*": {
+               __scope_link: "GLOBAL.aggregations"
+           }
+       },
+       aggregations: {
+           __template: {
+               "aggregation_name": {
+               }
+           },
+           "*": {
+               __scope_link: "GLOBAL.aggregations"
+           }
+       },
       facets: {
          __template: {
             "NAME": {
