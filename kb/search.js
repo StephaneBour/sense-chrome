@@ -11,14 +11,24 @@ sense.kb.addEndpointDescription('_search', {
       query: {
            // populated by a global rule
       },
-      aggs: {
-          __template: {
-              "aggregation_name": {
-                  "aggregation_type": {
-                  }
-              }
-          }
-      },
+       aggs: {
+           __template: {
+               "aggregation_name": {
+               }
+           },
+           "*": {
+               __scope_link: "GLOBAL.aggregations"
+           }
+       },
+       aggregations: {
+           __template: {
+               "aggregation_name": {
+               }
+           },
+           "*": {
+               __scope_link: "GLOBAL.aggregations"
+           }
+       },
       facets: {
          __template: {
             "NAME": {
