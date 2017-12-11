@@ -1,4 +1,6 @@
 sense.kb.addGlobalAutocompleteRules("aggregations", {
+
+        // Metrics Aggregations
         avg: {
             __template: {field: ""},
             field: "$FIELD$",
@@ -126,21 +128,176 @@ sense.kb.addGlobalAutocompleteRules("aggregations", {
                 __scope_link: "GLOBAL.SCRIPT_ENV"
             }
         },
-        aggs: {
-            __template: {
-                "aggregation_name": {}
-            },
-            "*": {
-                __scope_link: "GLOBAL.aggregations"
+
+        // Buckets aggregation
+        date_histogram: {
+            __template: {field: "", interval: "month"},
+            interval: {__one_of: ["year", "quarter", "month", "week", "day", "hour", "minute", "1h", "1d", "1w"]},
+            field: "$FIELD$",
+            format: "",
+            offset: "",
+            keyed: {__one_of: [true, false]},
+            missing: "",
+            min_doc_count: ""
+        },
+        date_range: {
+            __template: {field: "", range: [{gte: "now-30d", lte: "now"}]},
+            field: "$FIELD$",
+            format: "",
+            range: [{gte: "", gt: "", lt: "", lte: "", to: "", from: ""}],
+        },
+        diversified_sampler: {
+            __template: {field: "", shard_size: ""},
+            shard_size: "",
+            field: "$FIELD$",
+            max_docs_per_value: "",
+            script: {
+                __scope_link: "GLOBAL.SCRIPT_ENV"
             }
         },
-        aggregations: {
-            __template: {
-                "aggregation_name": {}
+        filter: {
+            __scope_link: ".query"
+        },
+        filters: {
+            other_bucket_key: "",
+            filters: {
+                "*": {
+                    __scope_link: ".query"
+                }
+            }
+        },
+        geo_distance: {
+            __template: {field: "", origin: ""},
+            origin: "",
+            field: "$FIELD$",
+            ranges: [{gte: "", gt: "", lt: "", lte: "", to: "", from: ""}],
+            unit: "",
+            distance_type: {__one_of: ["arc", "plane"]},
+            keyed: {__one_of: [true, false]},
+        },
+        global: {},
+        histogram: {
+            __template: {field: "", interval: "50"},
+            interval: "",
+            field: "$FIELD$",
+            offset: "",
+            keyed: {__one_of: [true, false]},
+            missing: "",
+            extended_bounds: {
+                min: "",
+                max: ""
             },
-            "*": {
-                __scope_link: "GLOBAL.aggregations"
+            min_doc_count: ""
+        },
+        ip_range: {
+            __template: {field: "", ranges: [{to: ""}, {from: ""}]},
+            field: "$FIELD$",
+            ranges: [{to: "", from: "", mask: ""}],
+            keyed: {__one_of: [true, false]},
+        },
+        missing: {
+            __template: {
+                field: ""
+            }
+            ,
+            field: "$FIELD$",
+        }
+        ,
+        nested: {
+            __template: {
+                path: "", aggs:
+                    {
+                        aggregation_name: {}
+                    }
+            }
+            ,
+            path: "$FIELD$",
+            aggs:
+                {
+                    "*":
+                        {
+                            __scope_link: "GLOBAL.aggregations"
+                        }
+                }
+            ,
+        },
+        range: {
+            __template: {field: "", ranges: [{to: ""}, {from: ""}]},
+            field: "$FIELD$",
+            ranges: [{to: "", from: "", key: ""}],
+            keyed: {__one_of: [true, false]},
+            script: {
+                __scope_link: "GLOBAL.SCRIPT_ENV"
+            }
+        },
+        reverse_nested: {},
+        sampler: {
+            __template: {shard_size: "100"},
+            shard_size: ""
+        },
+        significant_terms: {
+            __template: {field: ""},
+            field: "$FIELD$"
+        },
+        significant_text: {
+            __template: {field: ""},
+            field: "$FIELD$"
+        },
+        terms: {
+            __template: {
+                field: ""
+            }
+            ,
+            field: "$FIELD$",
+            size:
+                "",
+            show_term_doc_count_error:
+                {
+                    __one_of: [true, false]
+                }
+            ,
+            order: {
+                _count: {
+                    __one_of: ["desc", "asc"]
+                }
+                ,
+                _key: {
+                    __one_of: ["desc", "asc"]
+                }
+                ,
+                "*":
+                    {
+                        __one_of: ["desc", "asc"]
+                    }
             }
         }
+        ,
+
+
+// Loop
+        aggs: {
+            __template: {
+                "aggregation_name":
+                    {}
+            }
+            ,
+            "*":
+                {
+                    __scope_link: "GLOBAL.aggregations"
+                }
+        }
+        ,
+        aggregations: {
+            __template: {
+                "aggregation_name":
+                    {}
+            }
+            ,
+            "*":
+                {
+                    __scope_link: "GLOBAL.aggregations"
+                }
+        }
     }
-);
+)
+;
