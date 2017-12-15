@@ -205,21 +205,9 @@ sense.kb.addGlobalAutocompleteRules("aggregations", {
         ,
         nested: {
             __template: {
-                path: "", aggs:
-                    {
-                        aggregation_name: {}
-                    }
-            }
-            ,
-            path: "$FIELD$",
-            aggs:
-                {
-                    "*":
-                        {
-                            __scope_link: "GLOBAL.aggregations"
-                        }
-                }
-            ,
+                path: ""
+            },
+            path: "$FIELD$"
         },
         range: {
             __template: {field: "", ranges: [{to: ""}, {from: ""}]},
