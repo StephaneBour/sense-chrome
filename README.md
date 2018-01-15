@@ -21,7 +21,7 @@ http.cors.enabled: true
 http.cors.allow-headers : X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
 http.cors.allow-credentials: true
 ```
-- (_optionnal - recommended if you call something other than your localhost_) Filtering the request on your IP ([ELS > 2.4](https://www.elastic.co/guide/en/x-pack/current/ip-filtering.html) - [ELS <= 2.4](https://www.elastic.co/guide/en/shield/current/ip-filtering.html) )
+- (_optional - recommended if you call something other than your localhost_) Filtering the request on your IP ([ELS > 2.4](https://www.elastic.co/guide/en/x-pack/current/ip-filtering.html) - [ELS <= 2.4](https://www.elastic.co/guide/en/shield/current/ip-filtering.html) )
 - Restart your elasticsearch
 - Go on http://sense.stephane.tech
 
