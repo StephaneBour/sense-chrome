@@ -68,6 +68,7 @@ function callES(server, url, method, data, successCallback, completeCallback) {
         url: url,
         data: method == "GET" ? null : data,
         contentType: 'application/json',
+		headers: method == "GET" ? null : { "Content-Type": "application/json" },
 //      xhrFields: {
 //            withCredentials: true
 //      },
