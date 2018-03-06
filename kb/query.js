@@ -102,6 +102,12 @@ sense.kb.addGlobalAutocompleteRules("query", {
             {__scope_link: ".query"}
         ]
     },
+    exists: {
+        __template: {
+            "field": "VALUE"
+        },
+        field: "$FIELD$"
+    },
     field: {
         "$FIELD$": {
             query: "", boost: 2.0,
