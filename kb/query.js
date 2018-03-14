@@ -58,6 +58,9 @@ sense.kb.addGlobalAutocompleteRules("query", {
         }
     },
     bool: {
+        filter: [
+            {__scope_link: "GLOBAL.query"}
+        ],
         must: [
             {__scope_link: "GLOBAL.query"}
         ],
