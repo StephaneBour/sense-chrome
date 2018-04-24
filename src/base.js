@@ -227,6 +227,38 @@ function copyAsCURL() {
 
 copyAsCURL = autoRetryIfTokenizing(copyAsCURL, true);
 
+function copyAsPhp() {
+    var req = sense.utils.getCurrentRequest();
+    if (!req) return;
+
+    // parsing URL for get index and type
+
+    if(req.url.charAt(0) == '/') {
+        req.url = req.url.slice(1);
+    }
+    var data = req.url.split('/');
+    var index = data[0];
+    var type = '';
+    if(data[1].slice(1) !== '_')
+        type = data[1];
+
+    var php = '[' + "\n\t" + '\'index\' => \'' + index + '\',' + "\n\t";
+    if(type !== '')
+        php = php + '\'type\' => \'' + type + '\',' + "\n\t";
+
+    php = php + '\'body\' => ' + "\n\t\t";
+
+    if (req.data && req.data.length) {
+        php += req.data.join("\n").replace(/"/g, '\'').replace(/{/g, '[').replace(/}/g, ']').replace(/:/g, ' =>');
+        if (req.data.length > 1) php += "\n"; // end with a new line
+    }
+    php = php + '];';
+
+    //console.log(php);
+    copyToClipboard(php);
+
+}
+
 
 function handleCURLPaste(text) {
     var curlInput = sense.curl.parseCURL(text);
@@ -512,6 +544,11 @@ function init() {
 
     $("#copy_as_curl").click(function (e) {
         copyAsCURL();
+        e.preventDefault();
+    });
+
+    $("#copy_as_php").click(function (e) {
+        copyAsPhp();
         e.preventDefault();
     });
 
