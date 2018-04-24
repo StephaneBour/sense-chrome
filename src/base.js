@@ -422,6 +422,26 @@ function moveToNextRequestEdge() {
 
 moveToNextRequestEdge = autoRetryIfTokenizing(moveToNextRequestEdge);
 
+function checkVersion() {
+    var hashLocal = '';
+        fetch('.git/FETCH_HEAD')
+        .then(response => response.text())
+        .then(function(text) {
+            hashLocal = text.split("\t")[0];
+            console
+
+            fetch('https://api.github.com/repos/StephaneBour/sense-chrome/commits')
+                .then(response => response.json())
+                .then(function(github) {
+                    if(github[0].sha !== hashLocal) {
+                        document.getElementById('new_version').style.display = 'block';
+                    }
+                });
+        });
+}
+
+moveToNextRequestEdge = autoRetryIfTokenizing(checkVersion);
+
 function init() {
 
     sense.editor = ace.edit("editor");
@@ -499,7 +519,6 @@ function init() {
 
     sense.editor.getSession().on("changeScrollTop", updateEditorActionsBar);
 
-
     sense.output = ace.edit("output");
     sense.output.getSession().setMode("ace/mode/json");
     sense.output.getSession().setFoldStyle('markbeginend');
@@ -535,7 +554,7 @@ function init() {
     sense.history.init();
     sense.saved.init();
     sense.autocomplete.init();
-
+    checkVersion();
     $("#send").tooltip();
     $("#send").click(function () {
         submitCurrentRequestToES();
