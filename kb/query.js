@@ -375,6 +375,15 @@ sense.kb.addGlobalAutocompleteRules("query", {
             relation: "within"
         },
         __scope_link: ".filter.geo_shape"
+    },
+    regexp: {
+        __template: {"FIELD": {value: "VALUE"}},
+        "$FIELD$": {
+            value: "",
+            boost: 1.2,
+            flags: {__one_of: ["ALL", "ANYSTRING", "COMPLEMENT", "EMPTY", "INTERSECTION", "INTERVAL", "NONE"]},
+            max_determinized_states: 20000
+        }
     }
 
 });
