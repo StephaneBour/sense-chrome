@@ -8,6 +8,7 @@ sense.kb.addEndpointDescription('_search', {
    types_mode: "multi",
    doc_id_mode: "none",
    data_autocomplete_rules: {
+        min_score: 0.1,
       query: {
            // populated by a global rule
       },
