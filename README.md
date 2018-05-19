@@ -48,7 +48,8 @@ Have fun !
 #### Autocomplete
 
 ![Autocomplete](https://github.com/StephaneBour/sense-chrome/raw/master/screenshots/autocomplete.jpg)
-![Autocomplete](https://github.com/StephaneBour/sense-chrome/raw/master/screenshots/min_score.png)
+
+![Autocomplete](https://raw.githubusercontent.com/pnlinh/sense-chrome/master/screenshots/min_score.png)
 
 
 #### Save your query
