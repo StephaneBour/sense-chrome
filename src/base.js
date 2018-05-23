@@ -246,11 +246,11 @@ function copyAsPhp() {
     if(type !== '')
         php = php + '\'type\' => \'' + type + '\',' + "\n\t";
 
-    php = php + '\'body\' => ' + "\n\t\t";
+    php = php + '\'body\' => ';
 
     if (req.data && req.data.length) {
-        php += req.data.join("\n").replace(/"/g, '\'').replace(/{/g, '[').replace(/}/g, ']').replace(/:/g, ' =>');
-        if (req.data.length > 1) php += "\n"; // end with a new line
+        php += req.data.join("\n").replace(/\n/g, '\n\t').replace(/"/g, '\'').replace(/{/g, '[').replace(/},?/g, '],').replace(/:/g, ' =>')+'\n';
+        if (req.data.length > 1) php += "\t"; // end with a new line
     }
     php = php + '];';
 
