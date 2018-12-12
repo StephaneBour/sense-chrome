@@ -260,6 +260,34 @@ function copyAsPhp() {
 }
 
 
+
+function copyForElasticdump() {
+    var req = sense.utils.getCurrentRequest();
+    if (!req) return;
+
+    if(req.url.charAt(0) == '/') {
+        req.url = req.url.slice(1);
+    }
+    var data = req.url.split('/');
+    var index = data[0];
+    var type = '';
+    if(data[1].slice(1) !== '_')
+        type = data[1];
+
+    var es_server = $("#es_server").val(),
+        es_url = req.url,
+        es_method = req.method,
+        es_data = req.data;
+
+    var url = constructESUrl(es_server, index + '/' + type);
+
+    var elasticdump = 'elasticdump --input=' + url + ' --output=./' + index + '_' + type + '_' + (new Date()).getTime()
+        + '.json --type=data --searchBody=\'' + reformatData(es_data, 0).data + '\' --limit=1000';
+
+    copyToClipboard(elasticdump);
+
+}
+
 function handleCURLPaste(text) {
     var curlInput = sense.curl.parseCURL(text);
     if ($("#es_server").val()) curlInput.server = null; // do not override server
@@ -568,6 +596,11 @@ function init() {
 
     $("#copy_as_php").click(function (e) {
         copyAsPhp();
+        e.preventDefault();
+    });
+
+    $("#copy_for_elasticdump").click(function (e) {
+        copyForElasticdump();
         e.preventDefault();
     });
 
