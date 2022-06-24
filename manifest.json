@@ -1,8 +1,8 @@
 {
    "background": {
-      "scripts": [ "src/background.js" ]
+      "service_worker": "src/background.js"
    },
-   "browser_action": {
+   "action": {
       "default_icon": {
          "19": "icons/logo19.png",
          "38": "icons/logo38.png"
@@ -14,9 +14,10 @@
       "16": "icons/logo16.png",
       "48": "icons/logo48.png"
    },
-   "manifest_version": 2,
+   "manifest_version": 3,
    "name": "Sense (BS Fork)",
-   "permissions": [ "tabs", "clipboardWrite", "http://*/*", "https://*/*", "storage", "webRequest", "webRequestBlocking" ],
+   "host_permissions": ["http://*/*", "http://*/*"],
+   "permissions": [ "tabs", "clipboardWrite",  "storage", "webRequest", "declarativeNetRequest" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.1"
 }
