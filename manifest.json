@@ -16,7 +16,7 @@
    },
    "manifest_version": 3,
    "name": "Sense (BS Fork)",
-   "host_permissions": ["http://*/*", "http://*/*"],
+   "host_permissions": ["http://*/*", "http://*/*", "https://*/*", "https://*/*"],
    "permissions": [ "tabs", "clipboardWrite",  "storage", "webRequest", "declarativeNetRequest" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.1"
