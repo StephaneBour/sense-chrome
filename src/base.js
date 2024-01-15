@@ -44,10 +44,10 @@ function resetToValues(server, content) {
 function constructESUrl(server, url) {
     if (url.indexOf("://") >= 0) return url;
     if (server.indexOf("://") < 0) server = "http://" + server;
-    if (server.substr(-1) == "/") {
-        server = server.substr(0, server.length - 1);
+    if (server.substring(-1) === "/") {
+        server = server.substring(0, server.length - 1);
     }
-    if (url.charAt(0) === "/") url = url.substr(1);
+    if (url.charAt(0) === "/") url = url.substring(1);
 
     return server + "/" + url;
 }
@@ -62,13 +62,13 @@ function callES(server, url, method, data, successCallback, completeCallback) {
     var password = url_parts[3];
     url = url_parts[1] + url_parts[4];
     console.log("Calling " + url + "  (uname: " + uname + " pwd: " + password + ")");
-    if (data && method == "GET") method = "POST";
+    if (data && method === "GET") method = "POST";
 
     $.ajax({
         url: url,
-        data: method == "GET" ? null : data,
+        data: method === "GET" ? null : data,
         contentType: 'application/json',
-		headers: method == "GET" ? null : { "Content-Type": "application/json" },
+		headers: method === "GET" ? null : { "Content-Type": "application/json" },
 //      xhrFields: {
 //            withCredentials: true
 //      },
@@ -465,6 +465,9 @@ function checkVersion() {
                         document.getElementById('new_version').style.display = 'block';
                     }
                 });
+        })
+        .catch(rejected => {
+            console.log(rejected);
         });
 }
 

@@ -73,7 +73,7 @@
 
 
     function hideAutoComplete(editor) {
-        if (MODE != MODE_VISIBLE) return;
+        if (MODE !== MODE_VISIBLE) return;
         editor = editor || sense.editor;
         editor.commands.removeCommands(visibleMenuAceCMDS);
         editor.commands.addCommands(_cached_cmds_to_restore);

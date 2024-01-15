@@ -138,31 +138,32 @@
       return [field_name];
    }
 
-   function getFieldNamesFromTypeMapping(type_mapping) {
-      var properties;
-
-      if(typeof type_mapping['properties'] == 'undefined')
-          properties = type_mapping[Object.keys(type_mapping)[0]]['properties'];
-      else
-          properties = type_mapping['properties'];
-
-      if(typeof properties == 'undefined') {
-         return null;
+   function extractConcatenatedKeys(json) {
+      let keys = [];
+  
+      function extractKeys(obj, prefix) {
+          for (let key in obj) {
+              // Construire le chemin complet de la clé
+              let fullPath = prefix ? prefix + "." + key : key;
+  
+              if (obj.hasOwnProperty(key)) {
+                  // Si c'est un objet avec des propriétés, on explore récursivement
+                  if (obj[key] && typeof obj[key] === 'object' && obj[key].hasOwnProperty('properties')) {
+                      extractKeys(obj[key].properties, fullPath);
+                  } else {
+                      // Sinon, on ajoute simplement la clé complète
+                      keys.push(fullPath);
+                  }
+              }
+          }
       }
+  
+      extractKeys(json);
+      return keys;
+  }
 
-      var field_list =
-         $.map(properties, function (field_mapping, field_name) {
-            return getFieldNamesFromFieldMapping(field_name, field_mapping);
-         });
-
-      // deduping
-      var last = undefined;
-      field_list.sort();
-      return $.map(field_list, function (f) {
-         var r = (f === last) ? null : f;
-         last = f;
-         return r;
-      });
+   function getFieldNamesFromTypeMapping(type_mapping, debug = false) {
+      return extractConcatenatedKeys(type_mapping);
    }
 
    function loadMappings(mappings) {
