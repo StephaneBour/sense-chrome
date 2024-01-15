@@ -43,7 +43,7 @@ sense.kb.addGlobalAutocompleteRules("query", {
         fields: ["$FIELD$"],
         use_dis_max: {__template: true, __one_of: [true, false]},
         tie_breaker: 0.0,
-        type: { __one_of: ['best_fields', 'most_fields', 'cross_fields', 'phrase', 'phrase_prefix'] }
+        type: {__one_of: ['best_fields', 'most_fields', 'cross_fields', 'phrase', 'phrase_prefix']}
     },
     filter: {
         __template: {"FIELD": "TEXT"},
@@ -340,6 +340,7 @@ sense.kb.addGlobalAutocompleteRules("query", {
         path: "",
         query: {},
         filter: {},
+        _name: "",
         score_mode: {__one_of: ["avg", "total", "max", "none"]}
     },
     custom_filters_score: {

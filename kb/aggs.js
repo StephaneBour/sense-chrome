@@ -1,5 +1,4 @@
 sense.kb.addGlobalAutocompleteRules("aggregations", {
-
         // Metrics Aggregations
         avg: {
             __template: {field: ""},
