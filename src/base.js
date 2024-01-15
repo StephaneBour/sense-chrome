@@ -103,7 +103,6 @@ function submitCurrentRequestToES() {
     if (es_data) es_data += "\n"; //append a new line for bulk requests.
 
     callES(es_server, es_url, es_method, es_data, null, function (xhr) {
-            const inJson = JSON.parse(value);
         $("#notification").text("").css("visibility", "hidden");
             if (typeof xhr.status == "number" &&
                 ((xhr.status >= 400 && xhr.status < 600) ||
