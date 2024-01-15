@@ -386,5 +386,4 @@ sense.kb.addGlobalAutocompleteRules("query", {
             max_determinized_states: 20000
         }
     }
-
 });

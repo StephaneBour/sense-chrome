@@ -286,5 +286,4 @@ sense.kb.addGlobalAutocompleteRules("aggregations", {
                 }
         }
     }
-)
-;
+);

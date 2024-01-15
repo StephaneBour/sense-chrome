@@ -82,6 +82,5 @@ sense.kb.addEndpointDescription('_search', {
         },
         explain: {__one_of: [true, false]},
         stats: [""]
-
     }
 });

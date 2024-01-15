@@ -38,8 +38,6 @@ sense.kb.addEndpointDescription('_settings', {
                 filter: {},
                 char_filter: {}
             }
-
-
         }
     }
 });
