@@ -4,13 +4,13 @@ if (!sense)
 sense.VERSION = "0.9.0";
 
 function autoRetryIfTokenizing(func, cancelAlreadyScheduledCalls) {
-    var timer = false;
-    var wrapper;
+    let timer = false;
+    let wrapper;
     wrapper = function () {
 
         if (!sense.utils.isTokenizationStable()) {
-            var self = this;
-            var args = arguments;
+            const self = this;
+            const args = arguments;
             if (cancelAlreadyScheduledCalls && typeof timer == "number") {
                 clearTimeout(timer);
             }
@@ -23,8 +23,7 @@ function autoRetryIfTokenizing(func, cancelAlreadyScheduledCalls) {
         try {
             // now call the original method
             return func.apply(this, arguments);
-        }
-        finally {
+        } finally {
             timer = false;
         }
     }
@@ -55,11 +54,11 @@ function constructESUrl(server, url) {
 function callES(server, url, method, data, successCallback, completeCallback) {
 
     url = constructESUrl(server, url);
-    var uname_password_re = /^(https?:\/\/)?(?:(?:(.*):)?(.*?)@)?(.*)$/;
-    var url_parts = url.match(uname_password_re);
+    const uname_password_re = /^(https?:\/\/)?(?:(?:(.*):)?(.*?)@)?(.*)$/;
+    const url_parts = url.match(uname_password_re);
 
-    var uname = url_parts[2];
-    var password = url_parts[3];
+    const uname = url_parts[2];
+    const password = url_parts[3];
     url = url_parts[1] + url_parts[4];
     console.log("Calling " + url + "  (uname: " + uname + " pwd: " + password + ")");
     if (data && method === "GET") method = "POST";
@@ -68,7 +67,7 @@ function callES(server, url, method, data, successCallback, completeCallback) {
         url: url,
         data: method === "GET" ? null : data,
         contentType: 'application/json',
-		headers: method === "GET" ? null : { "Content-Type": "application/json" },
+        headers: method === "GET" ? null : {"Content-Type": "application/json"},
 //      xhrFields: {
 //            withCredentials: true
 //      },
@@ -91,20 +90,21 @@ function callES(server, url, method, data, successCallback, completeCallback) {
 }
 
 function submitCurrentRequestToES() {
-    var req = sense.utils.getCurrentRequest();
+    const req = sense.utils.getCurrentRequest();
     if (!req) return;
 
     $("#notification").text("Calling ES....").css("visibility", "visible");
     sense.output.getSession().setValue('');
 
-    var es_server = $("#es_server").val(),
+    let es_server = $("#es_server").val(),
         es_url = req.url,
         es_method = req.method,
         es_data = req.data.join("\n");
     if (es_data) es_data += "\n"; //append a new line for bulk requests.
 
-    callES(es_server, es_url, es_method, es_data, null, function (xhr, status) {
-            $("#notification").text("").css("visibility", "hidden");
+    callES(es_server, es_url, es_method, es_data, null, function (xhr) {
+            const inJson = JSON.parse(value);
+        $("#notification").text("").css("visibility", "hidden");
             if (typeof xhr.status == "number" &&
                 ((xhr.status >= 400 && xhr.status < 600) ||
                     (xhr.status >= 200 && xhr.status < 300)
@@ -113,19 +113,16 @@ function submitCurrentRequestToES() {
                 sense.history.addToHistory(es_server, es_url, es_method, es_data);
 
 
-                var value = xhr.responseText;
+                let value = xhr.responseText;
                 try {
-                    var inJson = JSON.parse(value);
                     value = JSON.stringify(JSON.parse(value), null, 3);
 
-                }
-                catch (e) {
+                } catch (e) {
 
                 }
                 sense.output.getSession().setValue(value);
                 sense.output.getSession().setCsv(ConvertSourceToCSV(inJson.hits.hits));
-            }
-            else {
+            } else {
                 sense.output.getSession().setValue("Request failed to get to the server (status code: " + xhr.status + "):" + xhr.responseText);
             }
 
@@ -138,16 +135,15 @@ function submitCurrentRequestToES() {
 submitCurrentRequestToES = autoRetryIfTokenizing(submitCurrentRequestToES);
 
 function reformatData(data, indent) {
-    var changed = false;
-    var formatted_data = [];
-    for (var i = 0; i < data.length; i++) {
-        var cur_doc = data[i];
+    let changed = false;
+    const formatted_data = [];
+    for (let i = 0; i < data.length; i++) {
+        const cur_doc = data[i];
         try {
-            var new_doc = JSON.stringify(JSON.parse(cur_doc), null, indent ? 3 : 0);
-            changed = changed || new_doc != cur_doc;
+            const new_doc = JSON.stringify(JSON.parse(cur_doc), null, indent ? 3 : 0);
+            changed = changed || new_doc !== cur_doc;
             formatted_data.push(new_doc);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
             formatted_data.push(cur_doc);
         }
@@ -158,12 +154,12 @@ function reformatData(data, indent) {
 
 
 function autoIndent() {
-    var req_range = sense.utils.getCurrentRequestRange();
+    const req_range = sense.utils.getCurrentRequestRange();
     if (!req_range) return;
-    var parsed_req = sense.utils.getCurrentRequest();
+    const parsed_req = sense.utils.getCurrentRequest();
     if (parsed_req.data && parsed_req.data.length > 0) {
-        var indent = parsed_req.data.length == 1; // unindent multi docs by default
-        var formatted_data = reformatData(parsed_req.data, indent);
+        const indent = parsed_req.data.length === 1;
+        let formatted_data = reformatData(parsed_req.data, indent);
         if (!formatted_data.changed) {
             // toggle.
             formatted_data = reformatData(parsed_req.data, !indent);
@@ -177,8 +173,8 @@ function autoIndent() {
 autoIndent = autoRetryIfTokenizing(autoIndent);
 
 function copyToClipboard(value) {
-    var currentActive = document.activeElement;
-    var clipboardStaging = $("#clipboardStaging");
+    const currentActive = document.activeElement;
+    const clipboardStaging = $("#clipboardStaging");
     clipboardStaging.val(value);
     clipboardStaging.select();
     document.execCommand("Copy", false);
@@ -187,109 +183,99 @@ function copyToClipboard(value) {
 
 
 function querySave() {
-    var req = sense.utils.getCurrentRequest();
+    const req = sense.utils.getCurrentRequest();
     if (!req) return;
 
-    var es_server = $("#es_server").val(),
+    const es_server = $("#es_server").val(),
         es_url = req.url,
         es_method = req.method,
         es_data = req.data;
 
-    var title = prompt("Please enter a title for your query : ", '');
+    const title = prompt("Please enter a title for your query : ", '');
 
     sense.saved.saveQuery(es_server, es_url, es_method, es_data, title);
 }
 
 function copyAsCURL() {
-    var req = sense.utils.getCurrentRequest();
+    const req = sense.utils.getCurrentRequest();
     if (!req) return;
 
-    var es_server = $("#es_server").val(),
+    const es_server = $("#es_server").val(),
         es_url = req.url,
         es_method = req.method,
         es_data = req.data;
 
-    var url = constructESUrl(es_server, es_url);
+    const url = constructESUrl(es_server, es_url);
 
-    var curl = 'curl -X' + es_method + ' "' + url + '"';
+    let curl = 'curl -X' + es_method + ' "' + url + '"';
     if (es_data && es_data.length) {
         curl += " -d'\n";
-        // since Sense doesn't allow single quote json string any single qoute is within a string.
+        // since Sense doesn't allow single quote json string any single quote is within a string.
         curl += es_data.join("\n").replace(/'/g, '\\"');
         if (es_data.length > 1) curl += "\n"; // end with a new line
         curl += "'";
     }
 
-    //console.log(curl);
     copyToClipboard(curl);
-
 }
 
 copyAsCURL = autoRetryIfTokenizing(copyAsCURL, true);
 
 function copyAsPhp() {
-    var req = sense.utils.getCurrentRequest();
+    const req = sense.utils.getCurrentRequest();
     if (!req) return;
 
-    // parsing URL for get index and type
-
-    if(req.url.charAt(0) == '/') {
+    if (req.url.charAt(0) === '/') {
         req.url = req.url.slice(1);
     }
-    var data = req.url.split('/');
-    var index = data[0];
-    var type = '';
-    if(data[1].slice(1) !== '_')
+    const data = req.url.split('/');
+    const index = data[0];
+    let type = '';
+    if (data[1].slice(1) !== '_')
         type = data[1];
 
-    var php = '[' + "\n\t" + '\'index\' => \'' + index + '\',' + "\n\t";
-    if(type !== '')
+    let php = '[' + "\n\t" + '\'index\' => \'' + index + '\',' + "\n\t";
+    if (type !== '')
         php = php + '\'type\' => \'' + type + '\',' + "\n\t";
 
     php = php + '\'body\' => ';
 
     if (req.data && req.data.length) {
-        php += req.data.join("\n").replace(/\n/g, '\n\t').replace(/"/g, '\'').replace(/{/g, '[').replace(/},?/g, '],').replace(/:/g, ' =>')+'\n';
+        php += req.data.join("\n").replace(/\n/g, '\n\t').replace(/"/g, '\'').replace(/{/g, '[').replace(/},?/g, '],').replace(/:/g, ' =>') + '\n';
         if (req.data.length > 1) php += "\t"; // end with a new line
     }
     php = php + '];';
 
-    //console.log(php);
     copyToClipboard(php);
-
 }
-
 
 
 function copyForElasticdump() {
-    var req = sense.utils.getCurrentRequest();
+    const req = sense.utils.getCurrentRequest();
     if (!req) return;
 
-    if(req.url.charAt(0) == '/') {
+    if (req.url.charAt(0) === '/') {
         req.url = req.url.slice(1);
     }
-    var data = req.url.split('/');
-    var index = data[0];
-    var type = '';
-    if(data[1].slice(1) !== '_')
+    const data = req.url.split('/');
+    const index = data[0];
+    let type = '';
+    if (data[1].slice(1) !== '_')
         type = data[1];
 
-    var es_server = $("#es_server").val(),
-        es_url = req.url,
-        es_method = req.method,
+    const es_server = $("#es_server").val(),
         es_data = req.data;
 
-    var url = constructESUrl(es_server, index + '/' + type);
+    const url = constructESUrl(es_server, index + '/' + type);
 
-    var elasticdump = 'elasticdump --input=' + url + ' --output=./' + index + '_' + type + '_' + (new Date()).getTime()
+    const elasticdump = 'elasticdump --input=' + url + ' --output=./' + index + '_' + type + '_' + (new Date()).getTime()
         + '.json --type=data --searchBody=\'' + reformatData(es_data, 0).data + '\' --limit=1000';
 
     copyToClipboard(elasticdump);
-
 }
 
 function handleCURLPaste(text) {
-    var curlInput = sense.curl.parseCURL(text);
+    const curlInput = sense.curl.parseCURL(text);
     if ($("#es_server").val()) curlInput.server = null; // do not override server
 
     if (!curlInput.method) curlInput.method = "GET";
@@ -299,20 +285,20 @@ function handleCURLPaste(text) {
 }
 
 
-var CURRENT_REQ_RANGE = null;
+let CURRENT_REQ_RANGE = null;
 
 
 function ConvertSourceToCSV(objArray) {
-    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    var str = '';
-    var headers = [];
+    const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
+    const headers = [];
 
-    for (var i = 0; i < array.length; i++) {
-        var line = '';
-        var source = array[i]._source;
+    for (let i = 0; i < array.length; i++) {
+        let line = '';
+        const source = array[i]._source;
 
-        if (str == '') {
-            for (var index in source) {
+        if (str === '') {
+            for (const index in source) {
                 str += index + ',';
                 headers.push(index);
             }
@@ -321,7 +307,7 @@ function ConvertSourceToCSV(objArray) {
             str += "\r\n";
         }
 
-        for (var h = 0; h < headers.length; h++) {
+        for (let h = 0; h < headers.length; h++) {
             if (typeof source[headers[h]] == 'undefined') {
                 source[headers[h]] = '';
             }
@@ -338,26 +324,20 @@ function ConvertSourceToCSV(objArray) {
 
 function saveEditorState() {
     try {
-        var content = sense.editor.getValue();
-        var server = $("#es_server").val();
+        const content = sense.editor.getValue();
+        const server = $("#es_server").val();
         sense.history.saveCurrentEditorState(server, content);
-    }
-    catch (e) {
+    } catch (e) {
         console.log("Ignoring saving error: " + e)
     }
 }
 
-function exportCsv() {
-    var csv = sense.output.getSession().getCsv();
-    saveAs(csv, "export-sense.csv");
-}
-
-var saveAs = (function () {
-    var a = document.createElement("a");
+const saveAs = (function () {
+    const a = document.createElement("a");
     document.body.appendChild(a);
-    a.style = "display: none";
+    a.style.display = "none";
     return function (data, fileName) {
-        var blob = new Blob([data], {type: "text/plain;charset=utf-8"}),
+        const blob = new Blob([data], {type: "text/plain;charset=utf-8"}),
             url = window.URL.createObjectURL(blob);
         a.href = url;
         a.download = fileName;
@@ -366,35 +346,39 @@ var saveAs = (function () {
     };
 }());
 
+function exportCsv() {
+    const csv = sense.output.getSession().getCsv();
+    saveAs(csv, "export-sense.csv");
+}
+
+
 function updateEditorActionsBar() {
-    var editor_actions = $("#editor_actions");
+    const editor_actions = $("#editor_actions");
 
     if (CURRENT_REQ_RANGE) {
-        var row = CURRENT_REQ_RANGE.start.row;
-        var column = CURRENT_REQ_RANGE.start.column;
-        var session = sense.editor.session;
-        var firstLine = session.getLine(row);
-        var offset = 0;
+        let row = CURRENT_REQ_RANGE.start.row;
+        const column = CURRENT_REQ_RANGE.start.column;
+        const session = sense.editor.session;
+        const firstLine = session.getLine(row);
+        let offset = 0;
         if (firstLine.length > session.getScreenWidth() - 5) {
             // overlap first row
             if (row > 0) row--; else row++;
         }
-        var screen_pos = sense.editor.renderer.textToScreenCoordinates(row, column);
+        const screen_pos = sense.editor.renderer.textToScreenCoordinates(row, column);
         offset += screen_pos.pageY - 3;
-        var end_offset = sense.editor.renderer.textToScreenCoordinates(CURRENT_REQ_RANGE.end.row,
+        const end_offset = sense.editor.renderer.textToScreenCoordinates(CURRENT_REQ_RANGE.end.row,
             CURRENT_REQ_RANGE.end.column).pageY;
 
         offset = Math.min(end_offset, Math.max(offset, 47));
         if (offset >= 47) {
             editor_actions.css("top", Math.max(offset, 47));
             editor_actions.css('visibility', 'visible');
-        }
-        else {
+        } else {
             editor_actions.css("top", 0);
             editor_actions.css('visibility', 'hidden');
         }
-    }
-    else {
+    } else {
         editor_actions.css("top", 0);
         editor_actions.css('visibility', 'hidden');
     }
@@ -402,19 +386,19 @@ function updateEditorActionsBar() {
 }
 
 function highlighCurrentRequestAndUpdateActionBar() {
-    var session = sense.editor.getSession();
-    var new_current_req_range = sense.utils.getCurrentRequestRange();
+    const session = sense.editor.getSession();
+    const new_current_req_range = sense.utils.getCurrentRequestRange();
     if (new_current_req_range == null && CURRENT_REQ_RANGE == null) return;
     if (new_current_req_range != null && CURRENT_REQ_RANGE != null &&
-        new_current_req_range.start.row == CURRENT_REQ_RANGE.start.row &&
-        new_current_req_range.end.row == CURRENT_REQ_RANGE.end.row
+        new_current_req_range.start.row === CURRENT_REQ_RANGE.start.row &&
+        new_current_req_range.end.row === CURRENT_REQ_RANGE.end.row
     ) {
         // same request, now see if we are on the first line and update the action bar
-        var cursorRow = sense.editor.getCursorPosition().row;
-        if (cursorRow == CURRENT_REQ_RANGE.start.row) {
+        const cursorRow = sense.editor.getCursorPosition().row;
+        if (cursorRow === CURRENT_REQ_RANGE.start.row) {
             updateEditorActionsBar();
         }
-        return; // nothing to do..
+        return;
     }
 
     if (CURRENT_REQ_RANGE) {
@@ -431,7 +415,7 @@ function highlighCurrentRequestAndUpdateActionBar() {
 highlighCurrentRequestAndUpdateActionBar = autoRetryIfTokenizing(highlighCurrentRequestAndUpdateActionBar, true);
 
 function moveToPreviousRequestEdge() {
-    var pos = sense.editor.getCursorPosition();
+    const pos = sense.editor.getCursorPosition();
     for (pos.row--; pos.row > 0 && !sense.utils.isRequestEdge(pos.row); pos.row--) {
     }
     sense.editor.moveCursorTo(pos.row, 0);
@@ -441,8 +425,8 @@ moveToPreviousRequestEdge = autoRetryIfTokenizing(moveToPreviousRequestEdge);
 
 
 function moveToNextRequestEdge() {
-    var pos = sense.editor.getCursorPosition();
-    var maxRow = sense.editor.getSession().getLength();
+    const pos = sense.editor.getCursorPosition();
+    const maxRow = sense.editor.getSession().getLength();
     for (pos.row++; pos.row < maxRow && !sense.utils.isRequestEdge(pos.row); pos.row++) {
     }
     sense.editor.moveCursorTo(pos.row, 0);
@@ -451,17 +435,17 @@ function moveToNextRequestEdge() {
 moveToNextRequestEdge = autoRetryIfTokenizing(moveToNextRequestEdge);
 
 function checkVersion() {
-    var hashLocal = '';
-        fetch('.git/FETCH_HEAD')
+    let hashLocal = '';
+    fetch('.git/FETCH_HEAD')
         .then(response => response.text())
-        .then(function(text) {
+        .then(function (text) {
             hashLocal = text.split("\t")[0];
             console
 
             fetch('https://api.github.com/repos/StephaneBour/sense-chrome/commits')
                 .then(response => response.json())
-                .then(function(github) {
-                    if(github[0].sha !== hashLocal) {
+                .then(function (github) {
+                    if (github[0].sha !== hashLocal) {
                         document.getElementById('new_version').style.display = 'block';
                     }
                 });
@@ -474,7 +458,6 @@ function checkVersion() {
 moveToNextRequestEdge = autoRetryIfTokenizing(checkVersion);
 
 function init() {
-
     sense.editor = ace.edit("editor");
     ace.require("ace/mode/sense");
     sense.editor.getSession().setMode("ace/mode/sense");
@@ -515,8 +498,7 @@ function init() {
         exec: moveToNextRequestEdge
     });
 
-
-    var orig_paste = sense.editor.onPaste;
+    const orig_paste = sense.editor.onPaste;
     sense.editor.onPaste = function (text) {
         if (text && sense.curl.detectCURL(text)) {
             handleCURLPaste(text);
@@ -525,26 +507,25 @@ function init() {
         orig_paste.call(this, text);
     };
 
-    sense.editor.getSession().on('tokenizerUpdate', function (e) {
+    sense.editor.getSession().on('tokenizerUpdate', function () {
         highlighCurrentRequestAndUpdateActionBar();
     });
 
-    sense.editor.getSession().selection.on('changeCursor', function (e) {
+    sense.editor.getSession().selection.on('changeCursor', function () {
         highlighCurrentRequestAndUpdateActionBar();
     });
 
-
-    var save_generation = 0;
+    let save_generation = 0;
 
     function get_save_callback(for_generation) {
         return function () {
-            if (save_generation == for_generation) {
+            if (save_generation === for_generation) {
                 saveEditorState();
             }
         }
     }
 
-    sense.editor.getSession().on("change", function (e) {
+    sense.editor.getSession().on("change", function () {
         setTimeout(get_save_callback(++save_generation), 500);
     });
 
@@ -558,7 +539,7 @@ function init() {
     sense.output.setShowPrintMargin(false);
     sense.output.setReadOnly(true);
 
-    var editorElement = $("#editor"),
+    const editorElement = $("#editor"),
         outputElement = $("#output"),
         editorActions = $("#editor_actions");
 
@@ -567,14 +548,13 @@ function init() {
         {
             autoHide: false,
             handles: 'e',
-            start: function (e, ui) {
-                editor_resizebar = $(".ui-resizable-e").addClass("active");
+            start: function () {
+                $(".ui-resizable-e").addClass("active");
             },
             stop: function (e, ui) {
-                editor_resizebar = $(".ui-resizable-e").removeClass("active");
+                $(".ui-resizable-e").removeClass("active");
 
-                var parent = ui.element.parent();
-                var editorSize = ui.element.outerWidth();
+                const editorSize = ui.element.outerWidth();
                 outputElement.css("left", editorSize);
                 editorActions.css("margin-right", -editorSize + 3);
                 sense.editor.resize(true);
@@ -586,8 +566,7 @@ function init() {
     sense.saved.init();
     sense.autocomplete.init();
     checkVersion();
-    $("#send").tooltip();
-    $("#send").click(function () {
+    $("#send").tooltip().click(function () {
         submitCurrentRequestToES();
         return false;
     });
@@ -623,7 +602,7 @@ function init() {
         e.preventDefault();
     });
 
-    var help_popup = $("#help_popup");
+    const help_popup = $("#help_popup");
 
     help_popup.on('shown', function () {
         $('<div id="example_editor">PUT index/type/1\n'
@@ -633,7 +612,7 @@ function init() {
             + 'GET index/type/1\n'
             + '</div>').appendTo(help_popup.find("#example_editor_container"));
 
-        var example_editor = ace.edit("example_editor");
+        const example_editor = ace.edit("example_editor");
         example_editor.getSession().setMode("ace/mode/sense");
         example_editor.getSession().setFoldStyle('markbeginend');
         example_editor.setReadOnly(true);
@@ -642,40 +621,35 @@ function init() {
 
     help_popup.on('hidden', function () {
         help_popup.find('#example_editor').remove();
-
     });
 
 
-    var es_server = $("#es_server");
-
+    const es_server = $("#es_server");
     es_server.blur(function () {
         sense.mappings.notifyServerChange(es_server.val());
     });
 
-    var editor_source = sense.utils.getUrlParam('load_from') || "stored";
-    var last_editor_state = sense.history.getSavedEditorState();
-    if (editor_source == "stored") {
+    const editor_source = sense.utils.getUrlParam('load_from') || "stored";
+    const last_editor_state = sense.history.getSavedEditorState();
+    if (editor_source === "stored") {
         if (last_editor_state) {
             resetToValues(last_editor_state.server, last_editor_state.content);
-        }
-        else {
+        } else {
             autoIndent();
         }
-    }
-    else if (/^https?:\/\//.exec(editor_source)) {
+    } else if (/^https?:\/\//.exec(editor_source)) {
         $.get(editor_source, null, function (data) {
             resetToValues(null, data);
             highlighCurrentRequestAndUpdateActionBar();
             updateEditorActionsBar();
         });
-    }
-    else {
+    } else {
         if (last_editor_state) {
             resetToValues(last_editor_state.server);
         }
     }
 
-    if (document.location.pathname && document.location.pathname.indexOf("_plugin") == 1) {
+    if (document.location.pathname && document.location.pathname.indexOf("_plugin") === 1) {
         // running as an ES plugin. Always assume we are using that elasticsearch
         resetToValues(document.location.host);
     }
@@ -686,7 +660,7 @@ function init() {
 
     if (!localStorage.getItem("version_welcome_shown")) {
         localStorage.setItem("version_welcome_shown", sense.VERSION);
-        var welcome_popup = $("#welcome_popup");
+        const welcome_popup = $("#welcome_popup");
         welcome_popup.modal();
         welcome_popup.on('shown', function () {
             $('<div id="example_editor">PUT index/type/1\n'
@@ -696,7 +670,7 @@ function init() {
                 + 'GET index/type/1\n'
                 + '</div>').appendTo(welcome_popup.find("#example_editor_container"));
 
-            var example_editor = ace.edit("example_editor");
+            const example_editor = ace.edit("example_editor");
             example_editor.getSession().setMode("ace/mode/sense");
             example_editor.getSession().setFoldStyle('markbeginend');
             example_editor.setReadOnly(true);
