@@ -103,7 +103,7 @@ function submitCurrentRequestToES() {
     if (es_data) es_data += "\n"; //append a new line for bulk requests.
 
     callES(es_server, es_url, es_method, es_data, null, function (xhr) {
-        $("#notification").text("").css("visibility", "hidden");
+            $("#notification").text("").css("visibility", "hidden");
             if (typeof xhr.status == "number" &&
                 ((xhr.status >= 400 && xhr.status < 600) ||
                     (xhr.status >= 200 && xhr.status < 300)
@@ -111,16 +111,15 @@ function submitCurrentRequestToES() {
                 // we have someone on the other side. Add to history
                 sense.history.addToHistory(es_server, es_url, es_method, es_data);
 
-
                 let value = xhr.responseText;
                 try {
                     value = JSON.stringify(JSON.parse(value), null, 3);
-
                 } catch (e) {
-
                 }
                 sense.output.getSession().setValue(value);
-                sense.output.getSession().setCsv(ConvertSourceToCSV(inJson.hits.hits));
+                if (JSON.parse(value) && JSON.parse(value).hits && JSON.parse(value).hits.hits) {
+                    sense.output.getSession().setCsv(ConvertSourceToCSV(JSON.parse(value)?.hits?.hits));
+                }
             } else {
                 sense.output.getSession().setValue("Request failed to get to the server (status code: " + xhr.status + "):" + xhr.responseText);
             }
