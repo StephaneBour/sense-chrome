@@ -1,7 +1,6 @@
 (function () {
-
-    var global = window;
-    var GLOBAL_AUTOCOMPLETE_RULES = {}, ES_SCHEME_BY_ENDPOINT = {};
+    const global = window;
+    let GLOBAL_AUTOCOMPLETE_RULES = {}, ES_SCHEME_BY_ENDPOINT = {};
 
     function escapeRegex(text) {
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -9,7 +8,7 @@
 
     function addGlobalAutocompleteRules(parentNode, rules) {
         if (typeof parentNode == 'object') {
-            parentNode.forEach(function(element) {
+            parentNode.forEach(function (element) {
                 console.log(element);
             });
         } else {
@@ -27,13 +26,13 @@
             description.endpoint_autocomplete = [endpoint];
 
         if (!description.match) {
-            var l = $.map(description.endpoint_autocomplete, escapeRegex);
+            const l = $.map(description.endpoint_autocomplete, escapeRegex);
             description.match = "(?:" + l.join(")|(?:") + ")";
         }
 
         if (typeof description.match == "string") description.match = new RegExp(description.match);
 
-        var copiedDescription = {};
+        const copiedDescription = {};
         $.extend(copiedDescription, description);
         copiedDescription._id = endpoint;
 
@@ -45,20 +44,20 @@
     }
 
     function getEndpointsForIndicesTypesAndId(indices, types, id) {
-        var ret = [];
-        var index_mode = "none";
+        const ret = [];
+        let index_mode = "none";
         if (indices && indices.length > 0) {
             indices = sense.mappings.expandAliases(indices);
             index_mode = typeof indices == "string" ? "single" : "multi";
         }
 
-        var type_mode = "none";
+        let type_mode = "none";
         if (types && types.length > 0) type_mode = types.length > 1 ? "multi" : "single";
-        var id_mode = "none";
+        let id_mode = "none";
         if (id && id.length > 0) id_mode = "single";
 
-        for (var endpoint in ES_SCHEME_BY_ENDPOINT) {
-            var scheme = ES_SCHEME_BY_ENDPOINT[endpoint];
+        for (const endpoint in ES_SCHEME_BY_ENDPOINT) {
+            const scheme = ES_SCHEME_BY_ENDPOINT[endpoint];
             switch (scheme.indices_mode) {
                 case "none":
                     if (index_mode !== "none") continue;
@@ -98,19 +97,19 @@
     }
 
     function getEndpointDescriptionByPath(path, indices, types, id) {
-        var endpoints = getEndpointsForIndicesTypesAndId(indices, types, id);
-        for (var i = 0; i < endpoints.length; i++) {
-            var scheme = ES_SCHEME_BY_ENDPOINT[endpoints[i]];
+        const endpoints = getEndpointsForIndicesTypesAndId(indices, types, id);
+        for (let i = 0; i < endpoints.length; i++) {
+            const scheme = ES_SCHEME_BY_ENDPOINT[endpoints[i]];
             if (scheme.match.test(path || "")) return scheme;
         }
         return null;
     }
 
     function getEndpointAutocomplete(indices, types, id) {
-        var ret = [];
-        var endpoints = getEndpointsForIndicesTypesAndId(indices, types, id);
-        for (var i = 0; i < endpoints.length; i++) {
-            var scheme = ES_SCHEME_BY_ENDPOINT[endpoints[i]];
+        const ret = [];
+        const endpoints = getEndpointsForIndicesTypesAndId(indices, types, id);
+        for (let i = 0; i < endpoints.length; i++) {
+            const scheme = ES_SCHEME_BY_ENDPOINT[endpoints[i]];
             ret.push.apply(ret, scheme.endpoint_autocomplete);
         }
         return ret;
@@ -130,6 +129,4 @@
     global.sense.kb.getEndpointDescriptionByPath = getEndpointDescriptionByPath;
     global.sense.kb.getEndpointDescriptionByEndpoint = getEndpointDescriptionByEndpoint;
     global.sense.kb.clear = clear;
-
-
 })();
