@@ -20,7 +20,7 @@
         ret.sort();
         let last;
         ret = $.map(ret, function (v) {
-            const r = last == v ? null : v;
+            const r = last === v ? null : v;
             last = v;
             return r;
         });
