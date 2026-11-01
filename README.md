@@ -27,6 +27,14 @@ http.cors.allow-credentials: true
 
 Have fun !
 
+#### Elasticsearch 8
+
+Elasticsearch 8 enables security (TLS + authentication) by default :
+
+- Put your credentials in the server field : `https://elastic:password@localhost:9200`, they are sent as a `Basic` `Authorization` header
+- If your cluster uses a self-signed certificate, open `https://localhost:9200` once in a Chrome tab and accept the certificate, otherwise requests will fail
+- Mapping types don't exist anymore : use `PUT index/_doc/1`, `POST index/_update/1`, `GET index/_source/1`...
+
 
 #### Change from the original extension
 

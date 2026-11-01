@@ -207,3 +207,36 @@ test("Aliases", function () {
   deepEqual(global.sense.mappings.expandAliases("alias2"), "test_index2");
 });
 
+
+test("Typeless mappings (ES 8)", function () {
+  global.sense.mappings.loadMappings({
+    "index": {
+      "mappings": {
+        "dynamic": "strict",
+        "properties": {
+          "message": {
+            "type": "text",
+            "fields": {
+              "keyword": {"type": "keyword", "ignore_above": 256}
+            }
+          },
+          "user": {
+            "properties": {
+              "name": {"type": "keyword"},
+              "id": {"type": "long"}
+            }
+          }
+        }
+      }
+    },
+    "empty_index": {
+      "mappings": {}
+    }
+  });
+
+  deepEqual(global.sense.mappings.getFields("index").sort(),
+      ["message", "message.keyword", "user.id", "user.name" ]);
+  deepEqual(global.sense.mappings.getFields("empty_index"), []);
+  deepEqual(global.sense.mappings.getTypes("index"), []);
+  deepEqual(global.sense.mappings.getIndices(false).sort(), ["empty_index", "index" ]);
+});

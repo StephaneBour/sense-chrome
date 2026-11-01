@@ -1,6 +1,9 @@
 (function () {
     const global = window;
 
+    // Clé interne utilisée pour les index sans type (ES >= 7)
+    const TYPELESS = "_doc";
+
     let currentServer;
     let per_index_types = {};
     let per_alias_indexes = [];
@@ -41,7 +44,7 @@
             } else {
                 // filter what we need
                 $.each(type_dict, function (type, fields) {
-                    if (!types || types.length === 0 || $.inArray(type, types) !== -1)
+                    if (!types || types.length === 0 || type === TYPELESS || $.inArray(type, types) !== -1)
                         ret.push(fields);
                 });
 
@@ -69,7 +72,7 @@
 
             // filter what we need
             $.each(type_dict, function (type) {
-                ret.push(type);
+                if (type !== TYPELESS) ret.push(type);
             });
         } else {
             // multi index mode.
@@ -145,6 +148,10 @@
                     } else {
                         // Sinon, on ajoute simplement la clé complète
                         keys.push(fullPath);
+                        // Multi-fields (ex: "title.keyword")
+                        if (obj[key] && typeof obj[key] === 'object' && obj[key].fields) {
+                            extractKeys(obj[key].fields, fullPath);
+                        }
                     }
                 }
             }
@@ -156,6 +163,16 @@
 
     function getFieldNamesFromTypeMapping(type_mapping) {
         return extractConcatenatedKeys(type_mapping);
+    }
+
+    function isTypelessMapping(mapping) {
+        // Un mapping ES >= 7 contient directement "properties" (ou est vide pour un index sans champ)
+        if ($.isEmptyObject(mapping)) return true;
+        const typeless_keys = ['properties', 'dynamic', 'dynamic_templates', '_source', '_routing', '_meta',
+            'runtime', 'date_detection', 'numeric_detection', 'dynamic_date_formats', 'enabled', 'subobjects'];
+        return Object.keys(mapping).some(function (key) {
+            return $.inArray(key, typeless_keys) !== -1;
+        });
     }
 
     function loadMappings(mappings) {
@@ -171,9 +188,14 @@
                 mapping = index_mapping['mappings'];
             }
 
-            $.each(mapping, function (type_name, type_mapping) {
-                normalized_index_mappings[type_name] = getFieldNamesFromTypeMapping(type_mapping);
-            });
+            if (isTypelessMapping(mapping)) {
+                // ES >= 7 : plus de types, les champs sont directement sous "properties"
+                normalized_index_mappings[TYPELESS] = getFieldNamesFromTypeMapping(mapping['properties'] || {});
+            } else {
+                $.each(mapping, function (type_name, type_mapping) {
+                    normalized_index_mappings[type_name] = getFieldNamesFromTypeMapping(type_mapping['properties'] || type_mapping);
+                });
+            }
             per_index_types[index] = normalized_index_mappings;
         });
     }

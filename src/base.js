@@ -51,6 +51,11 @@ function constructESUrl(server, url) {
     return server + "/" + url;
 }
 
+function getContentType(url) {
+    // les endpoints multi-documents attendent du NDJSON
+    return /(^|\/)_(bulk|msearch)(\/|\?|$)/.test(url) ? "application/x-ndjson" : "application/json";
+}
+
 function callES(server, url, method, data, successCallback, completeCallback) {
 
     url = constructESUrl(server, url);
@@ -60,14 +65,19 @@ function callES(server, url, method, data, successCallback, completeCallback) {
     const uname = url_parts[2];
     const password = url_parts[3];
     url = url_parts[1] + url_parts[4];
-    console.log("Calling " + url + "  (uname: " + uname + " pwd: " + password + ")");
+    console.log("Calling " + url + (uname ? "  (uname: " + uname + ")" : ""));
     if (data && method === "GET") method = "POST";
+
+    const headers = {};
+    if (method !== "GET") headers["Content-Type"] = getContentType(url);
+    // ES 8 active la sécurité par défaut : on envoie directement le Basic auth
+    if (uname || password) headers["Authorization"] = "Basic " + btoa((uname || "") + ":" + (password || ""));
 
     $.ajax({
         url: url,
         data: method === "GET" ? null : data,
-        contentType: 'application/json',
-        headers: method === "GET" ? null : {"Content-Type": "application/json"},
+        contentType: getContentType(url),
+        headers: headers,
 //      xhrFields: {
 //            withCredentials: true
 //      },
@@ -207,6 +217,7 @@ function copyAsCURL() {
 
     let curl = 'curl -X' + es_method + ' "' + url + '"';
     if (es_data && es_data.length) {
+        curl += " -H 'Content-Type: " + getContentType(url) + "'";
         curl += " -d'\n";
         // since Sense doesn't allow single quote json string any single quote is within a string.
         curl += es_data.join("\n").replace(/'/g, '\\"');
@@ -226,15 +237,10 @@ function copyAsPhp() {
     if (req.url.charAt(0) === '/') {
         req.url = req.url.slice(1);
     }
-    const data = req.url.split('/');
-    const index = data[0];
-    let type = '';
-    if (data[1].slice(1) !== '_')
-        type = data[1];
+    // ES 8 : plus de type, seul l'index est transmis
+    const index = req.url.split(/[\/?]/)[0];
 
     let php = '[' + "\n\t" + '\'index\' => \'' + index + '\',' + "\n\t";
-    if (type !== '')
-        php = php + '\'type\' => \'' + type + '\',' + "\n\t";
 
     php = php + '\'body\' => ';
 
@@ -255,18 +261,15 @@ function copyForElasticdump() {
     if (req.url.charAt(0) === '/') {
         req.url = req.url.slice(1);
     }
-    const data = req.url.split('/');
-    const index = data[0];
-    let type = '';
-    if (data[1].slice(1) !== '_')
-        type = data[1];
+    // ES 8 : plus de type, seul l'index est transmis
+    const index = req.url.split(/[\/?]/)[0];
 
     const es_server = $("#es_server").val(),
         es_data = req.data;
 
-    const url = constructESUrl(es_server, index + '/' + type);
+    const url = constructESUrl(es_server, index);
 
-    const elasticdump = 'elasticdump --input=' + url + ' --output=./' + index + '_' + type + '_' + (new Date()).getTime()
+    const elasticdump = 'elasticdump --input=' + url + ' --output=./' + index + '_' + (new Date()).getTime()
         + '.json --type=data --searchBody=\'' + reformatData(es_data, 0).data + '\' --limit=1000';
 
     copyToClipboard(elasticdump);
@@ -603,11 +606,11 @@ function init() {
     const help_popup = $("#help_popup");
 
     help_popup.on('shown', function () {
-        $('<div id="example_editor">PUT index/type/1\n'
+        $('<div id="example_editor">PUT index/_doc/1\n'
             + '{\n'
             + '   "body": "here"\n'
             + '}\n\n'
-            + 'GET index/type/1\n'
+            + 'GET index/_doc/1\n'
             + '</div>').appendTo(help_popup.find("#example_editor_container"));
 
         const example_editor = ace.edit("example_editor");
@@ -661,11 +664,11 @@ function init() {
         const welcome_popup = $("#welcome_popup");
         welcome_popup.modal();
         welcome_popup.on('shown', function () {
-            $('<div id="example_editor">PUT index/type/1\n'
+            $('<div id="example_editor">PUT index/_doc/1\n'
                 + '{\n'
                 + '   "body": "here"\n'
                 + '}\n\n'
-                + 'GET index/type/1\n'
+                + 'GET index/_doc/1\n'
                 + '</div>').appendTo(welcome_popup.find("#example_editor_container"));
 
             const example_editor = ace.edit("example_editor");
